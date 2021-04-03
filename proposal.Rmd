@@ -1,0 +1,45 @@
+---
+title: "proposal"
+output: html_document
+---
+
+Team Members
+Tyler Christians, Ashlan Simpson, John Whitehead, Anusha Sharma 
+
+Dataset 
+Melbourne Housing Snapshot
+https://www.kaggle.com/dansbecker/melbourne-housing-snapshot
+
+Overview
+This dataset by a user on Kaggle named dansbecker, contains information of Melbourne real estate. Some of the most important variables are Type of house, Real estate agent, region, and Price.  It is a snapshot of a larger dataset created by Tony Pino. The data was scraped from publicly available results posted on Domain.com.au. There are 21 variables that are a mix of categorical and quantitative. There are 13378 observations. All variables have clear meanings and coding and any short hand is defined in the descriptions given above the dataset on the website. 
+
+
+Purpose
+This analysis could benefit individuals looking for housing in the Melbourne area, our analysis includes information about housing types, price, and sellers, etc. This provides guidelines for buyers to make an informed decision, which is important because housing is a substantial financial commitment that will affect your life for years.
+
+
+Plan for Analysis
+
+Housing types:
+What type of houses are closest to the CBD?
+Distribution of housing types in each region?
+Which types of houses are the newest?
+Which housing types have the most square footage?
+Do variables like Car, Bathroom, and Rooms have a strong correlation with the size of the property?
+Housing Price:
+How does each area affect the price of each type of property?
+How does the year built affect the price of each type of property?
+How does price change over time? Which house tends to be the most expensive and which is the cheapest?
+What type of Method resulted in the highest average sale price.
+
+Housing sellers:
+Which method is the most common for each individual seller?
+Which seller has sold the highest amount in property?
+How many houses has each seller sold?
+
+
+Housing Region:
+Which suburb is the house located in?
+How far is the house from the CBD?
+How many houses are in each region?
+
