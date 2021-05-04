@@ -1,0 +1,98 @@
+---
+title: "TylerChristiansFin"
+output: html_document
+---
+
+One of the interesting problems we encountered in this project was collecting a map of Melbourne Australia since there isn't one readily available. We were able to work around this by finding a package that was able to read shape files and turn them into an object that was usable with ggplot. After this we were able to find a website where we could draw around the map of melbourne that included the Lat and Lon in the shape file and import that yousing the "sf" library.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(maps)
+library(sf)
+df <- read.csv("melb_data.csv")
+```
+
+Here wee can see some information on the pricing of houses based on what type of housing it is and what region it is in. Some of the interesting things are
+
++ All of the Metropolitan areas have much higher housing prices
+
++ Victoria areas tend not to have too many Unit housing types, which are also much cheaper than they would be in the Metropolitan areas
+
++ There seem to be a lot of outliers for housing prices in the metropolitan areas. This could be due to the fact that these areas have a lot more stand out housing
+developments that cost a lot more to build because they are new developments in an older already developed area.
+
+
+```{r}
+df %>%
+  group_by(Type,Regionname)%>%
+  ggplot(aes(x=Type, y=Price)) + geom_boxplot() + facet_wrap(~Regionname, scales = "free")
+```
+
+```{r}
+df %>%
+  group_by(Type, Method) %>%
+  ggplot(aes(x=Price))+geom_histogram(bins=20)+facet_grid(~Method, scales = "free")+theme(axis.text.x = element_text(angle=90))
+df %>%
+  group_by(Type, Method) %>%
+  ggplot(aes(x=Price))+geom_histogram(bins=20)+facet_grid(~Type, scales = "free")+theme(axis.text.x = element_text(angle=90))
+```
+
+
+Some Interesting information can be seen here following along with more of the mapping information. This is a map that shows the average year a house was built in different regions. Some of the interesting things we noticed with this are
+
+* Houses tend to get older the closer you get to the Big City.
+
+* The average age of a house does not exceed 1985
+
+* Houses in the city are older because of the fact that it's harder to add new developments n an area already extremely developed
+
+
+```{r}
+AUST <- read_sf("shape1.DXF")
+```
+```{r}
+dfNoNa <- na.omit(df)
+dfYear <- aggregate(dfNoNa$YearBuilt, by = list(RegionName = dfNoNa$Regionname), FUN = mean)
+dfYear <- dfYear %>%
+  rename(
+    YearBuilt = x
+  )
+dfLat <- aggregate(df$Lattitude, by = list(RegionName = df$Regionname), FUN = mean)
+dfLat <- dfLat%>%
+  rename(
+    Lat = x
+  )
+dfLon <- aggregate(df$Longtitude, by = list(RegionName = df$Regionname), FUN = mean)
+dfLon <- dfLon%>%
+  rename(
+    Lon = x
+  )
+df1 <- merge(dfYear, dfLat, by = "RegionName")
+df1 <- merge(df1, dfLon, by = "RegionName")
+df1 <- df1%>%
+  separate(YearBuilt, c("YearBuilt","Delete", sep = "."))
+drops <- c("Delete",".")
+df1 <- df1[, !(names(df1) %in% drops)]
+df2 <- df1
+df2$Lat <- df2$Lat+.04
+df2 <- df2 %>%
+  separate(RegionName, c("RegionName", "Deletes"), sep="etro")
+drops1 <- c("Deletes")
+df2 <- df2[, !(names(df2) %in% drops1)]
+df3 <- df1
+df3$Lat <- df3$Lat-.04
+```
+```{r}
+Mmap <- ggplot() +
+  geom_sf(data=AUST)
+Mmap <- Mmap + annotate("point", x=df1$Lon, y = df1$Lat, color="yellow",size=2,label=df1$YearBuilt) + annotate("text", x=df3$Lon, y = df3$Lat, color="red",size=3,label=df3$YearBuilt) + annotate("text", x=df2$Lon, y = df2$Lat, color="red",size=3,label=df2$RegionName)
+
+Mmap
+```
+
